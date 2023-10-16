@@ -14,6 +14,7 @@
 
 import streamlit as st
 from streamlit.logger import get_logger
+from streamlit_player import st_player
 
 LOGGER = get_logger(__name__)
 
@@ -32,6 +33,9 @@ def run():
         ### Página hecha para llevar control sobre algunos proyectos en conjunto con la preciosa más chinchuda de la FQ
       """
     )
+    # Youtube video
+    video = "https://www.youtube.com/watch?v=sk_T8BYNEI4"
+    st_player(video)
 
 
 if __name__ == "__main__":
