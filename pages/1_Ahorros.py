@@ -10,7 +10,7 @@ tz = pytz.timezone('America/Mexico_City')
 conn = sqlite3.connect('data.db')
 c = conn.cursor()
 fecha_actual1 = 2023-10-14
-ingresos = 30
+ingresos1 = 30
 gastos1 = 0
 
 c.execute("INSERT INTO registros (fecha, ingresos, gastos) VALUES (?, ?, ?)",
