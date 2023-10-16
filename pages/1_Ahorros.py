@@ -3,7 +3,9 @@ import sqlite3
 from datetime import datetime
 import pandas as pd
 import altair as alt
+import pytz
 
+tz = pytz.timezone('America/Mexico_City')
 # Crear una conexión a la base de datos SQLite (o crear el archivo de la base de datos si no existe)
 conn = sqlite3.connect('data.db')
 c = conn.cursor()
@@ -35,7 +37,7 @@ def main_window():
             if ingresos.isnumeric() and gastos.isnumeric():
                 ingresos = float(ingresos)
                 gastos = float(gastos)
-                fecha_actual = datetime.now().strftime("%Y-%m-%d")
+                fecha_actual = datetime.now(tz).strftime("%Y-%m-%d")
                 # Insertar datos en la base de datos
                 c.execute("INSERT INTO registros (fecha, ingresos, gastos) VALUES (?, ?, ?)",
                           (fecha_actual, ingresos, gastos))
