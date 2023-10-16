@@ -7,7 +7,6 @@ import altair as alt
 # Crear una conexión a la base de datos SQLite (o crear el archivo de la base de datos si no existe)
 conn = sqlite3.connect('data.db')
 c = conn.cursor()
-url_spotify = 'https://open.spotify.com/track/7MVIfkyzuUmQ716j8U7yGR?si=0959a91afff44e2d'
 
 # Crear una tabla si no existe
 c.execute('''
