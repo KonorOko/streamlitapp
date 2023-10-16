@@ -30,7 +30,7 @@ def run():
     st.markdown(
         """
         ### Página hecha para llevar control sobre algunos proyectos 
-        en conjunto con la preciosa más chinchuda de la FQ
+        ### en conjunto con la preciosa más chinchuda de la FQ
       """
     )
 
