@@ -9,13 +9,7 @@ tz = pytz.timezone('America/Mexico_City')
 # Crear una conexión a la base de datos SQLite (o crear el archivo de la base de datos si no existe)
 conn = sqlite3.connect('data.db')
 c = conn.cursor()
-fecha_actual1 = 2023-10-14
-ingresos1 = 30
-gastos1 = 0
 
-c.execute("INSERT INTO registros (fecha, ingresos, gastos) VALUES (?, ?, ?)",
-                          (fecha_actual1, ingresos1, gastos1))
-conn.commit()
 # Crear una tabla si no existe
 c.execute('''
           CREATE TABLE IF NOT EXISTS registros (
@@ -85,7 +79,6 @@ def main_window():
     c.execute("SELECT * FROM registros")
     db_data = c.fetchall()
     df = pd.DataFrame(db_data, columns=['id', 'Fecha', 'Ingresos', 'Gastos'])
-    st.write(df)
     df['Fecha'] = pd.to_datetime(df['Fecha'], format='%Y-%m-%d')
     df['Fecha'] = df['Fecha'].dt.date
     df['Ingresos'] = pd.to_numeric(df['Ingresos'], errors='coerce')
