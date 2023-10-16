@@ -85,6 +85,7 @@ def main_window():
     c.execute("SELECT * FROM registros")
     db_data = c.fetchall()
     df = pd.DataFrame(db_data, columns=['id', 'Fecha', 'Ingresos', 'Gastos'])
+    st.write(df)
     df['Fecha'] = pd.to_datetime(df['Fecha'], format='%Y-%m-%d')
     df['Fecha'] = df['Fecha'].dt.date
     df['Ingresos'] = pd.to_numeric(df['Ingresos'], errors='coerce')
