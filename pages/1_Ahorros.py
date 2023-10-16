@@ -9,7 +9,8 @@ tz = pytz.timezone('America/Mexico_City')
 # Crear una conexión a la base de datos SQLite (o crear el archivo de la base de datos si no existe)
 conn = sqlite3.connect('data.db')
 c = conn.cursor()
-
+c.execute("INSERT INTO registros (2023-10-14, 10, 0)") 
+conn.commit()
 # Crear una tabla si no existe
 c.execute('''
           CREATE TABLE IF NOT EXISTS registros (
