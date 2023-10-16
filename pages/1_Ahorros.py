@@ -94,7 +94,7 @@ def main_window():
         alt.Chart(tabla)
         .mark_line()
         .encode(
-        x=alt.X("Fecha:T", axis=alt.Axis(format='%Y-%m-%d')),
+        alt.X('utcyearmonthdate(Fecha):O').title('Fecha'),
         y="Balance total:Q")
         )
     st.altair_chart(chart, use_container_width=True)
