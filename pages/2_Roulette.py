@@ -11,7 +11,7 @@ try:
 		opciones.append(opcion)
 except Exception as e:
 	pass
-	
+st.write(opciones)
 # Botón para girar la ruleta
 if st.button("¡Girar la ruleta!"):
     # Animación de giro
