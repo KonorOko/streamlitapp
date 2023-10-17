@@ -8,7 +8,7 @@ if 'opciones' not in st.session_state:
 try:
     opciones = st.text_input('Ingresa opciones a escoger:')
     if st.button('Agregar'):
-        opciones = opciones.split()
+        opciones = opciones.split(', ')
         for opcion in opciones:
              st.session_state.opciones.append(opcion)
 except Exception as e:
