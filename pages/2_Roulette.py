@@ -3,8 +3,15 @@ import random
 import time
 
 # Lista de opciones en la ruleta
-opciones = ["Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5"]
+opciones = []
 
+try:
+	opcion = st.text_input('Ingresa opciones a escoger:')
+	if st.button('Agregar'):
+		opciones.append(opcion)
+except Exception as e:
+	pass
+	
 # Botón para girar la ruleta
 if st.button("¡Girar la ruleta!"):
     # Animación de giro
