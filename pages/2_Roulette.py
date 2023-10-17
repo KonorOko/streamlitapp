@@ -5,14 +5,15 @@ import time
 # Lista de opciones en la ruleta
 if 'opciones' not in st.session_state:
     st.session_state.opciones = []
-
-
 try:
-	opcion = st.text_input('Ingresa opciones a escoger:')
-	if st.button('Agregar'):
-		st.session_state.opciones.append(opcion)
+    opciones = st.text_input('Ingresa opciones a escoger:')
+    if st.button('Agregar'):
+        opciones = opciones.split()
+        for opcion in opciones:
+             st.session_state.opciones.append(opcion)
 except Exception as e:
 	pass
+
 st.write(st.session_state.opciones)
 # Botón para girar la ruleta
 if st.button("¡Girar la ruleta!"):
