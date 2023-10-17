@@ -3,15 +3,17 @@ import random
 import time
 
 # Lista de opciones en la ruleta
-opciones = []
+if 'opciones' not in st.session_state:
+    st.session_state.opciones = []
+
 
 try:
 	opcion = st.text_input('Ingresa opciones a escoger:')
 	if st.button('Agregar'):
-		opciones.append(opcion)
+		st.session_state.opciones.append(opcion)
 except Exception as e:
 	pass
-st.write(opciones)
+st.write(st.session_state.opciones)
 # Botón para girar la ruleta
 if st.button("¡Girar la ruleta!"):
     # Animación de giro
