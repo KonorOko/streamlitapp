@@ -19,5 +19,5 @@ if st.button("¡Girar la ruleta!"):
     # Animación de giro
     with st.spinner("Girando la ruleta..."):
         time.sleep(2)  # Simula un giro de 2 segundos
-        opcion_seleccionada = random.choice(opciones)
+        opcion_seleccionada = random.choice(st.session_state.opciones)
     st.success(f"¡La opción seleccionada es: {opcion_seleccionada}")
