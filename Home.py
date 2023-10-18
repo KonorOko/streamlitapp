@@ -30,13 +30,13 @@ def run():
 
     st.markdown(
         """
-        ### Página para recordale a la persona de mis sueños que la amo mucho.
+        ### Página para recordarle a la persona de mis sueños que la amo mucho.
         ---
         Canción que me recuerda a ella:
       """
     )
     # Youtube video
-    video = "https://www.youtube.com/watch?v=sk_T8BYNEI4"
+    video = "https://youtu.be/aBSkvI0CkgU?si=ehHIIc8epzgBoBZF"
     st_player(video)
 
 
