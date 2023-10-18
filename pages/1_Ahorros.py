@@ -103,6 +103,7 @@ def main_window():
 
     
 st.set_page_config(page_title="Ahorros", page_icon="📊")
-st.sidebar.header("Dinero")
+st.sidebar.header("Para el futuro")
+st.sidebar.caption('Vivir momentos a tu lado es lo mejor que hay.')
 
 main_window()

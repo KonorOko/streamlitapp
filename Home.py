@@ -30,9 +30,9 @@ def run():
 
     st.markdown(
         """
-        ### Página hecha para llevar control sobre algunos proyectos en conjunto con la preciosa más chinchuda de la FQ
-
-        
+        ### Página para recordale a la persona de mis sueños que la amo mucho.
+        ---
+        Canción que me recuerda a ella:
       """
     )
     # Youtube video
