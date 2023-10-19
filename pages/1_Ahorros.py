@@ -10,14 +10,14 @@ from sqlalchemy import func
 import mysql.connector
 '''
 database: project
-username: syq92swxj7nksylcqlwd
+username: 
 host: aws.connect.psdb.cloud
-password: pscale_pw_hCI6wiQa0xO0grGYGDfI0pNwyQLf549NxspFFKvHMdq
+password: 
 
 '''
 config = {
-    'user': ' evhflwkt1vhsd9l1rioe',
-    'password': 'pscale_pw_Mf9tyVbBH4c6UHg0vYyX1SasMDXNarO9wNIPj5CLdOp',
+    'user': 'syq92swxj7nksylcqlwd',
+    'password': 'pscale_pw_hCI6wiQa0xO0grGYGDfI0pNwyQLf549NxspFFKvHMdq',
     'host': 'aws.connect.psdb.cloud',
     'database': 'project',
     'ssl_verify_identity': True,
@@ -25,7 +25,10 @@ config = {
 }
 
 cnx = mysql.connector.connect(**config)
-cnx.close()
+
+cursor = cnx.cursor()
+
+query = "INSERT INTO Ahorro (Fecha, Ingresos, Gastos) VALUES (%s,%s,%s)"
 
 print("Successfully connected to PlanetScale!")
 
@@ -50,9 +53,9 @@ def main_window():
                 ingresos = float(ingresos)
                 gastos = float(gastos)
                 fecha_actual = datetime.now(tz).strftime("%Y-%m-%d")
-                nuevo_registro = Ahorro(Fecha = fecha_actual, Ingreso = ingresos, Gasto = gastos)
-                session.add(nuevo_registro)
-                session.commit()
+                nuevo_registro = (fecha_actual, ingresos, gastos)
+                cursor.execute(query,nuevo_registro)
+                cnx.commit()
 
             elif ingresos.isnumeric():
                 ingresos = float(ingresos)
@@ -60,18 +63,18 @@ def main_window():
                 fecha_actual = datetime.now(tz).strftime("%Y-%m-%d")
                 print(fecha_actual)
                 # Insertar datos en la base de datos
-                nuevo_registro = Ahorro(Fecha = fecha_actual, Ingreso = ingresos, Gasto = gastos)
-                session.add(nuevo_registro)
-                session.commit()
+                nuevo_registro = (fecha_actual, ingresos, gastos)
+                cursor.execute(query,nuevo_registro)
+                cnx.commit()
 
             elif gastos.isnumeric():
                 ingresos = float(0)
                 gastos = float(gastos)
                 fecha_actual = datetime.now(tz).strftime("%Y-%m-%d")
                 # Insertar datos en la base de datos
-                nuevo_registro = Ahorro(Fecha = fecha_actual, Ingreso = ingresos, Gasto = gastos)
-                session.add(nuevo_registro)
-                session.commit()
+                nuevo_registro = (fecha_actual, ingresos, gastos)
+                cursor.execute(query,nuevo_registro)
+                cnx.commit()
                 
                  
             else:
@@ -89,7 +92,8 @@ def main_window():
         st.error(f'Error: {e}')
 
     finally:
-         pass
+        cursor.close()
+        cnx.close()
          
 
     # Leer datos de la base de datos y crear un DataFrame
