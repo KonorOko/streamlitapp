@@ -1,10 +1,10 @@
 altair
+importlib-metadata
+mysql-connector-python
+mysqlclient
 numpy
 pandas
-pydeck
-streamlit
-streamlit_player
-SQLAlchemy
-mysql-connector-python
 python-dotenv
-mysql
+SQLAlchemy
+streamlit
+streamlit-player
