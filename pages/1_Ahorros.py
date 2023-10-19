@@ -7,14 +7,21 @@ from sqlalchemy import create_engine
 from models import Ahorro
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import func
+import mysql.connector
 
-# Conecction with database
-ssl_args = {'ssl_ca': '..\cacert.pem'}
-connection_string = "mysql+mysqlconnector://3lhloksa4psw2a2bhx1z:pscale_pw_1OoFUODtjBeCAdc8pnZcDa7ucUJAvixgRzooGyJy0od@aws.connect.psdb.cloud:3306/project"
-engine = create_engine(connection_string,
-    connect_args=ssl_args)
-Session = sessionmaker(bind=engine)
-session = Session()
+config = {
+    'user': ' evhflwkt1vhsd9l1rioe',
+    'password': 'pscale_pw_Mf9tyVbBH4c6UHg0vYyX1SasMDXNarO9wNIPj5CLdOp',
+    'host': 'aws.connect.psdb.cloud',
+    'database': 'project',
+    'ssl_verify_identity': True,
+    'ssl_ca': '/workspaces/streamlitapp/cacert.pem',
+}
+
+cnx = mysql.connector.connect(**config)
+cnx.close()
+
+print("Successfully connected to PlanetScale!")
 
 # Adjust the time zone
 tz = pytz.timezone('America/Mexico_City')
@@ -76,7 +83,7 @@ def main_window():
         st.error(f'Error: {e}')
 
     finally:
-         session.close()
+         pass
          
 
     # Leer datos de la base de datos y crear un DataFrame
