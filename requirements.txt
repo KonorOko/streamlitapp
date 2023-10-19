@@ -5,3 +5,4 @@ pydeck
 streamlit
 streamlit_player
 SQLAlchemy
+mysql-connector-python
