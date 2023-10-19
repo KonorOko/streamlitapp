@@ -6,4 +6,3 @@ pandas
 python-dotenv
 SQLAlchemy
 streamlit
-streamlit-player
