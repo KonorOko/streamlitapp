@@ -8,3 +8,5 @@ python-dotenv
 SQLAlchemy
 streamlit
 streamlit-player
+python-dateutil
+validators
