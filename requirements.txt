@@ -1,5 +1,4 @@
 altair
-importlib-metadata
 mysql-connector-python
 mysqlclient
 numpy
@@ -8,5 +7,3 @@ python-dotenv
 SQLAlchemy
 streamlit
 streamlit-player
-python-dateutil
-validators
