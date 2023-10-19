@@ -5,8 +5,9 @@ from sqlalchemy.orm import sessionmaker
 import pandas as pd
 
 # Conecction with database
-connection_string = "mysql+mysqlconnector://45wonyp10vd2fnvak8tz:pscale_pw_fFwKbJoObAsv3eSc3qmQMdX6t0rmT2MJu4W7AAGJiyB:3306/project"
-engine = create_engine(connection_string, echo=True)
+ssl_args = {'ssl_ca': 'cacert.pem'}
+connection_string = "mysql+mysqlconnector://p52vdv0zokfr4l81yw6y:pscale_pw_tu40dgYizB7VgXbJNSFkRxQ5k7KIVVaaG2tvYhL9kbs@aws.connect.psdb.cloud:3306/project"
+engine = create_engine(connection_string, echo=False, connect_args=ssl_args)
 Session = sessionmaker(bind=engine)
 session = Session()
 

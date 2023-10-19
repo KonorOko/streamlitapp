@@ -9,9 +9,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import func
 
 # Conecction with database
-ssl_args = {'ssl_ca': 'cacert.pem'}
-connection_string = "mysql+mysqlconnector://p52vdv0zokfr4l81yw6y:pscale_pw_tu40dgYizB7VgXbJNSFkRxQ5k7KIVVaaG2tvYhL9kbs@aws.connect.psdb.cloud:3306/project"
-engine = create_engine(connection_string, echo=True, connect_args=ssl_args)
+ssl_args = {'ssl_ca': '..\cacert.pem'}
+connection_string = "mysql+mysqlconnector://bfepf78lco4kh7pqldu8:pscale_pw_WbmcSGmVA4K1ZJBsigInRMl3O1SHF0gow4ogKWxn7bx@aws.connect.psdb.cloud:3306/project"
+engine = create_engine(connection_string, echo=False, connect_args=ssl_args)
 Session = sessionmaker(bind=engine)
 session = Session()
 
