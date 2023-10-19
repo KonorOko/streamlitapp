@@ -8,7 +8,13 @@ from models import Ahorro
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import func
 import mysql.connector
+'''
+database: project
+username: syq92swxj7nksylcqlwd
+host: aws.connect.psdb.cloud
+password: pscale_pw_hCI6wiQa0xO0grGYGDfI0pNwyQLf549NxspFFKvHMdq
 
+'''
 config = {
     'user': ' evhflwkt1vhsd9l1rioe',
     'password': 'pscale_pw_Mf9tyVbBH4c6UHg0vYyX1SasMDXNarO9wNIPj5CLdOp',
@@ -88,7 +94,7 @@ def main_window():
 
     # Leer datos de la base de datos y crear un DataFrame
     consulta_sql = "SELECT * FROM Ahorro"
-    df = pd.read_sql_query(consulta_sql, engine)
+    df = pd.read_sql_query(consulta_sql, cnx)
     df['Fecha'] = pd.to_datetime(df['Fecha'], format='%Y-%m-%d')
     df['Fecha'] = df['Fecha'].dt.date
     df['Ingresos'] = pd.to_numeric(df['Ingreso'], errors='coerce')
