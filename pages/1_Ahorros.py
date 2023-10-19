@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import func
 
 # Conecction with database
-connection_string = "mysql+mysqlconnector://45wonyp10vd2fnvak8tz:pscale_pw_fFwKbJoObAsv3eSc3qmQMdX6t0rmT2MJu4W7AAGJiyB@aws.connect.psdb.cloud:3306/project"
+connection_string = "mysql+mysqlconnector://m5qoljcqyqn3mlu52js0:pscale_pw_I0bKOUU4b21vmIbYeqimYpv1TONk9Y82XGjpio2Zf3T@aws.connect.psdb.cloud:3306/project"
 engine = create_engine(connection_string, echo=True)
 Session = sessionmaker(bind=engine)
 session = Session()
