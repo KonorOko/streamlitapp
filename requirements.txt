@@ -6,3 +6,4 @@ streamlit
 streamlit_player
 SQLAlchemy
 mysql-connector-python
+python-dotenv
