@@ -1,21 +1,68 @@
 import streamlit as st
+from sqlalchemy import create_engine
+from models import Plan
+from sqlalchemy.orm import sessionmaker
+import pandas as pd
+
+# Conecction with database
+connection_string = "mysql+mysqlconnector://45wonyp10vd2fnvak8tz:pscale_pw_fFwKbJoObAsv3eSc3qmQMdX6t0rmT2MJu4W7AAGJiyB@aws.connect.psdb.cloud:3306/project"
+engine = create_engine(connection_string, echo=True)
+Session = sessionmaker(bind=engine)
+session = Session()
 
 def main():
-    if 'citas' not in st.session_state:
-        st.session_state.citas = []
-
     st.header('Planes por hacer')
     st.markdown('''
 Salidas o citas que tenemos pendientes por hacer💕''')
     try:
-        cita = st.text_input('Agregar planes:')
-        if st.button('Agregar'):
-            st.session_state.citas.append(cita)
-
-        for i in st.session_state.citas:
-            st.checkbox(i)
+        cita = st.text_input('Agregar planes:', placeholder='Cita<3')
+        budget = st.text_input('Budget', placeholder= 'Dinero necesario')
+        if st.button('Agregar', type= 'primary'):
+            nuevo_registro = Plan(Nombre = cita, Budget = budget)
+            session.add(nuevo_registro)
+            session.commit()
+            
     except:
         pass
+
+    finally:
+        session.close()
+
+    try:
+        consulta_sql = "SELECT * FROM Ahorro"
+        df = pd.read_sql_query(consulta_sql, engine)
+        df['Fecha'] = pd.to_datetime(df['Fecha'], format='%Y-%m-%d')
+        df['Fecha'] = df['Fecha'].dt.date
+        df['Ingresos'] = pd.to_numeric(df['Ingreso'], errors='coerce')
+        df['Gastos'] = pd.to_numeric(df['Gasto'], errors='coerce')
+
+        tabla = df.groupby('Fecha').agg({'Ingreso': 'sum', 'Gasto': 'sum'}).reset_index()
+
+        tabla['Balance diario'] = tabla['Ingreso'] - tabla['Gasto']
+        tabla['Balance total'] = tabla['Balance diario'].cumsum()
+        idmax = tabla['Balance total'].idxmax()
+        balance_total = tabla['Balance total'].iloc[idmax]
+
+        query = 'SELECT * FROM Plan'
+        df1 = pd.read_sql_query(query, engine)
+
+        df1['Dinero'] = df1.apply(lambda row: row['Budget'] <= balance_total, axis=1)
+
+
+        st.data_editor(
+            df1,
+            column_config={
+                "Dinero": st.column_config.CheckboxColumn(
+                    "Dinero?",
+                    help="Se marcan cuando tenemos el dinero suficiente",
+                    default=False,
+            )
+        },
+        disabled=["widgets"],
+        hide_index=True,
+        )
+    finally:
+        session.close()
 
 st.set_page_config(page_title='Citas', page_icon='📆')  
 st.sidebar.header("Citas bonitas")

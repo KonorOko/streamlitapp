@@ -1,92 +1,93 @@
 import streamlit as st
-import sqlite3
 from datetime import datetime
 import pandas as pd
 import altair as alt
 import pytz
+from sqlalchemy import create_engine
+from models import Ahorro
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import func
 
+# Conecction with database
+connection_string = "mysql+mysqlconnector://45wonyp10vd2fnvak8tz:pscale_pw_fFwKbJoObAsv3eSc3qmQMdX6t0rmT2MJu4W7AAGJiyB@aws.connect.psdb.cloud:3306/project"
+engine = create_engine(connection_string, echo=True)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Adjust the time zone
 tz = pytz.timezone('America/Mexico_City')
-# Crear una conexión a la base de datos SQLite (o crear el archivo de la base de datos si no existe)
-conn = sqlite3.connect('data.db')
-c = conn.cursor()
-
-# Crear una tabla si no existe
-c.execute('''
-          CREATE TABLE IF NOT EXISTS registros (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              fecha TEXT,
-              ingresos REAL,
-              gastos REAL
-          )
-          ''')
 
 
 def main_window():
     st.markdown("""
                 # Alcancia
-                ### Ahorros para comprar cosas con la más preciosa
+                ### Dinero ahorrado con la más preciosa del mundo ☀️❤️
                 """)
 
     # Obtener los valores actuales de los widgets (si existen)
-    ingresos = st.text_input('Ingresos', key= 1)
-    gastos = st.text_input('Gastos', key=2)
+    ingresos = st.text_input('Ingresos', key= 1, placeholder= 'Ingresar dinero<3')
+    gastos = st.text_input('Gastos', key=2, placeholder= 'Ingresar dinero gastado unu')
 
     try:
         col1, col2, col3 = st.columns(3)
-        if col1.button("Agregar"):
+        if col1.button("Agregar registro", type="primary"):
             if ingresos.isnumeric() and gastos.isnumeric():
                 ingresos = float(ingresos)
                 gastos = float(gastos)
                 fecha_actual = datetime.now(tz).strftime("%Y-%m-%d")
-                # Insertar datos en la base de datos
-                c.execute("INSERT INTO registros (fecha, ingresos, gastos) VALUES (?, ?, ?)",
-                          (fecha_actual, ingresos, gastos))
-                conn.commit()  # Guardar cambios en la base de datos
+                nuevo_registro = Ahorro(Fecha = fecha_actual, Ingreso = ingresos, Gasto = gastos)
+                session.add(nuevo_registro)
+                session.commit()
 
             elif ingresos.isnumeric():
                 ingresos = float(ingresos)
                 gastos = float(0)
-                fecha_actual = datetime.now().strftime("%Y-%m-%d")
+                fecha_actual = datetime.now(tz).strftime("%Y-%m-%d")
+                print(fecha_actual)
                 # Insertar datos en la base de datos
-                c.execute("INSERT INTO registros (fecha, ingresos, gastos) VALUES (?, ?, ?)",
-                          (fecha_actual, ingresos, gastos))
-                conn.commit()  # Guardar cambios en la base de datos
+                nuevo_registro = Ahorro(Fecha = fecha_actual, Ingreso = ingresos, Gasto = gastos)
+                session.add(nuevo_registro)
+                session.commit()
 
             elif gastos.isnumeric():
                 ingresos = float(0)
                 gastos = float(gastos)
-                fecha_actual = datetime.now().strftime("%Y-%m-%d")
+                fecha_actual = datetime.now(tz).strftime("%Y-%m-%d")
                 # Insertar datos en la base de datos
-                c.execute("INSERT INTO registros (fecha, ingresos, gastos) VALUES (?, ?, ?)",
-                          (fecha_actual, ingresos, gastos))
-                conn.commit()  # Guardar cambios en la base de datos
+                nuevo_registro = Ahorro(Fecha = fecha_actual, Ingreso = ingresos, Gasto = gastos)
+                session.add(nuevo_registro)
+                session.commit()
+                
                  
             else:
                  pass
 
-        if col2.button("Borrar ultimo registro"):
-                c.execute("DELETE FROM registros WHERE id = (SELECT MAX(id) FROM registros)")
-                conn.commit()  # Guardar cambios en la base de datos
+        if col3.button("Borrar último registro", type="primary"):
+            ultimo_id = session.query(func.max(Ahorro.ID_Ahorro)).scalar()
+            elemento_a_eliminar = session.query(Ahorro).filter_by(ID_Ahorro=ultimo_id).one()
 
-        if col3.button("Borrar Registros"):
-            c.execute("DELETE FROM registros")  # Borrar todos los registros de la base de datos
-            conn.commit()  # Guardar cambios en la base de datos
+            session.delete(elemento_a_eliminar)
+            session.commit()
+
 
     except Exception as e:
         st.error(f'Error: {e}')
 
+    finally:
+         session.close()
+         
+
     # Leer datos de la base de datos y crear un DataFrame
-    c.execute("SELECT * FROM registros")
-    db_data = c.fetchall()
-    df = pd.DataFrame(db_data, columns=['id', 'Fecha', 'Ingresos', 'Gastos'])
+    consulta_sql = "SELECT * FROM Ahorro"
+    df = pd.read_sql_query(consulta_sql, engine)
     df['Fecha'] = pd.to_datetime(df['Fecha'], format='%Y-%m-%d')
     df['Fecha'] = df['Fecha'].dt.date
-    df['Ingresos'] = pd.to_numeric(df['Ingresos'], errors='coerce')
-    df['Gastos'] = pd.to_numeric(df['Gastos'], errors='coerce')
+    df['Ingresos'] = pd.to_numeric(df['Ingreso'], errors='coerce')
+    df['Gastos'] = pd.to_numeric(df['Gasto'], errors='coerce')
 
-    tabla = df.groupby('Fecha').agg({'Ingresos': 'sum', 'Gastos': 'sum'}).reset_index()
+    tabla = df.groupby('Fecha').agg({'Ingreso': 'sum', 'Gasto': 'sum'}).reset_index()
 
-    tabla['Balance diario'] = tabla['Ingresos'] - tabla['Gastos']
+    tabla['Balance diario'] = tabla['Ingreso'] - tabla['Gasto']
     tabla['Balance total'] = tabla['Balance diario'].cumsum()
 
     st.dataframe(tabla, height=200, width=800)

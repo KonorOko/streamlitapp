@@ -4,6 +4,7 @@ import time
 
 
 def ruleta():
+    
     # Header de pagina
     st.header('Ruleta')
     st.markdown('''
@@ -14,7 +15,7 @@ def ruleta():
     if 'opciones' not in st.session_state:
         st.session_state.opciones = []
     try:
-        opciones = st.text_input('Ingresa opciones a escoger:')
+        opciones = st.text_input('Ingresa opciones a escoger:', placeholder= '<3')
         if st.button('Agregar'):
             opciones = opciones.split(', ')
             for opcion in opciones:
@@ -29,7 +30,7 @@ def ruleta():
     try:
         if st.button("¡Girar la ruleta!"):
             with st.spinner("Girando la ruleta..."):
-                time.sleep(2)  # Simula un giro de 2 segundos
+                time.sleep(1.5)  # Simula un giro de 2 segundos
                 opcion_seleccionada = random.choice(st.session_state.opciones)
             st.success(f"¡La opción seleccionada es: {opcion_seleccionada}")
     except:
