@@ -10,8 +10,9 @@ from sqlalchemy import func
 
 # Conecction with database
 ssl_args = {'ssl_ca': '..\cacert.pem'}
-connection_string = "mysql+mysqlconnector://bfepf78lco4kh7pqldu8:pscale_pw_WbmcSGmVA4K1ZJBsigInRMl3O1SHF0gow4ogKWxn7bx@aws.connect.psdb.cloud:3306/project"
-engine = create_engine(connection_string, echo=False, connect_args=ssl_args)
+connection_string = "mysql+mysqlconnector://3lhloksa4psw2a2bhx1z:pscale_pw_1OoFUODtjBeCAdc8pnZcDa7ucUJAvixgRzooGyJy0od@aws.connect.psdb.cloud:3306/project"
+engine = create_engine(connection_string,
+    connect_args=ssl_args)
 Session = sessionmaker(bind=engine)
 session = Session()
 
