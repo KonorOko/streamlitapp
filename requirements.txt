@@ -6,3 +6,5 @@ pandas
 python-dotenv
 SQLAlchemy
 streamlit
+pydeck
+streamlit_player
