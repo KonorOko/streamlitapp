@@ -12,7 +12,7 @@ cursor.execute('''
     CREATE TABLE IF NOT EXISTS Plan (
         ID_Plan INTEGER PRIMARY KEY AUTOINCREMENT,
         Nombre TEXT NOT NULL,
-        Budget REAL NOT NULL,
+        Budget REAL NOT NULL
     )
 ''')
 
