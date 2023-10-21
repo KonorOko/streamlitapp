@@ -3,40 +3,44 @@ from datetime import datetime
 import pandas as pd
 import altair as alt
 import pytz
-from sqlalchemy import create_engine
-from models import Ahorro
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy import func
-import mysql.connector
-'''
-database: project
-username: 
-host: aws.connect.psdb.cloud
-password: 
+import streamlit as st
+
+from dotenv import load_dotenv
+load_dotenv()
+import os
+import MySQLdb
+
+connection = MySQLdb.connect(
+  host= os.getenv("DB_HOST"),
+  user=os.getenv("DB_USERNAME"),
+  passwd= os.getenv("DB_PASSWORD"),
+  db= os.getenv("DB_NAME"),
+  autocommit = True,
+  ssl_mode = "VERIFY_IDENTITY",
+  ssl      = {
+    "ca": "etc/ssl/cert.pem"
+  }
+)
+
+consulta = "SELECT * FROM Ahorro"
+
+# Lee la tabla en un DataFrame
+dataframe = pd.read_sql_query(consulta, connection)
+
+st.dataframe(dataframe)
+
+# Cierra la conexión a la base de datos
+connection.close()
+
 
 '''
-config = {
-    'user': 'syq92swxj7nksylcqlwd',
-    'password': 'pscale_pw_hCI6wiQa0xO0grGYGDfI0pNwyQLf549NxspFFKvHMdq',
-    'host': 'aws.connect.psdb.cloud',
-    'database': 'project',
-    'ssl_verify_identity': True,
-    'ssl_ca': '/workspaces/streamlitapp/cacert.pem',
-}
-
-cnx = mysql.connector.connect(**config)
-
-cursor = cnx.cursor()
-
-query = "INSERT INTO Ahorro (Fecha, Ingresos, Gastos) VALUES (%s,%s,%s)"
-
-print("Successfully connected to PlanetScale!")
-
 # Adjust the time zone
 tz = pytz.timezone('America/Mexico_City')
 
 
 def main_window():
+    conn = st.experimental_connection("supabase",type=SupabaseConnection)
     st.markdown("""
                 # Alcancia
                 ### Dinero ahorrado con la más preciosa del mundo ☀️❤️
@@ -97,8 +101,8 @@ def main_window():
          
 
     # Leer datos de la base de datos y crear un DataFrame
-    consulta_sql = "SELECT * FROM Ahorro"
-    df = pd.read_sql_query(consulta_sql, cnx)
+    consulta_sql = conn.query("*", table="Ahorro", ttl="10m").execute()
+    df = pd.read_sql_query(consulta_sql, conn)
     df['Fecha'] = pd.to_datetime(df['Fecha'], format='%Y-%m-%d')
     df['Fecha'] = df['Fecha'].dt.date
     df['Ingresos'] = pd.to_numeric(df['Ingreso'], errors='coerce')
@@ -127,3 +131,4 @@ st.sidebar.header("Para el futuro")
 st.sidebar.caption('Vivir momentos a tu lado es lo mejor que hay.')
 
 main_window()
+'''

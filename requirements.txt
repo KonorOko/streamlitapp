@@ -8,3 +8,5 @@ pydeck
 streamlit_player
 sqlalchemy
 mysql-connector-python
+st-supabase-connection
+mysqlclient
