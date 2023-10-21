@@ -6,3 +6,4 @@ streamlit
 pydeck
 streamlit_player
 mysqlclient
+SQLAlchemy
