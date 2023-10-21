@@ -29,14 +29,9 @@ Salidas o citas que tenemos pendientes por hacer💕''')
 
         delete = st.text_input('Eliminar', placeholder='Ingrese el nombre del plan que quiera borrar')
         if st.button('DELETE', type= 'primary'):
-            # Consulta para obtener el ID del último registro insertado
-            consulta_id = "SELECT MAX(ID_Plan) FROM Plan"
-            cursor.execute(consulta_id)
-            ultimo_id = cursor.fetchone()[0]
 
-            # Consulta para eliminar el último registro insertado
-            consulta_eliminar = "DELETE FROM Plan WHERE ID_Plan = %s"
-            cursor.execute(consulta_eliminar, (ultimo_id,))
+            consulta_eliminar = "DELETE FROM Plan WHERE Nombre = %s"
+            cursor.execute(consulta_eliminar, (delete,))
 
             # Hacer commit para confirmar los cambios en la base de datos
             connection.commit()
