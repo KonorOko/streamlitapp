@@ -1,20 +1,20 @@
-from st_supabase_connection import SupabaseConnection
-import streamlit as st
-import pandas as pd
 
-conn = st.experimental_connection("supabase",type=SupabaseConnection)
+import sqlite3
 
-# Perform query.
-rows = conn.query("*", table="Ahorro", ttl="10m").execute()
+conexion = sqlite3.connect('mi_base_de_datos.db')
 
-# Print results.
-Fecha = []
-Ingreso = []
-Gasto = []
-for row in rows.data:
-    Fecha = [row['Fecha']]
-    Ingreso = [row['Ingreso']]
-    Gasto = [row['Gasto']]
+# Crear un cursor para ejecutar comandos SQL
+cursor = conexion.cursor()
+'''
+query = 'INSERT INTO Ahorro (Fecha, Ingreso, Gasto) VALUES (?, ?, ?)'
 
-df = pd.DataFrame(data= {'Fecha': Fecha, 'Ingreso': Ingreso, 'Gasto': Gasto})
-st.dataframe(df)
+
+valores = [("2023-10-17", 10, 0),
+           ("2023-10-19", 10, 0),
+           ("2023-10-20", 10, 0)]
+
+cursor.executemany(query, valores)
+'''
+conexion.commit()
+cursor.close()
+conexion.close()

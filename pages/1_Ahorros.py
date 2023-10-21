@@ -5,44 +5,35 @@ import altair as alt
 import pytz
 from sqlalchemy import func
 import streamlit as st
-import ssl
 
-from dotenv import load_dotenv
-load_dotenv()
-import os
-import MySQLdb
+import sqlite3
 
-ssl_context = ssl.create_default_context()
-ssl_context.check_hostname = False
-ssl_context.verify_mode = ssl.CERT_NONE
+# Conectar a la base de datos (si no existe, se creará)
+conexion = sqlite3.connect('mi_base_de_datos.db')
 
-connection = MySQLdb.connect(
-  host= os.getenv("DB_HOST"),
-  user=os.getenv("DB_USERNAME"),
-  passwd= os.getenv("DB_PASSWORD"),
-  db= os.getenv("DB_NAME"),
-  autocommit = True,
-  ssl=ssl_context
-)
+# Crear un cursor para ejecutar comandos SQL
+cursor = conexion.cursor()
 
-consulta = "SELECT * FROM Ahorro"
+# Crear la tabla Ahorro solo si no existe
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS Ahorro (
+        ID_Ahorro INTEGER PRIMARY KEY AUTOINCREMENT,
+        Fecha TEXT NOT NULL,
+        Ingreso REAL NOT NULL,
+        Gasto REAL NOT NULL
+    )
+''')
 
-# Lee la tabla en un DataFrame
-dataframe = pd.read_sql_query(consulta, connection)
+conexion.commit()
+# Guardar los cambios y cerrar la conexión
 
-st.dataframe(dataframe)
+query = "INSERT INTO Ahorro (Fecha, Ingreso, Gasto) VALUES (?, ?, ?)"
 
-# Cierra la conexión a la base de datos
-connection.close()
-
-
-'''
 # Adjust the time zone
 tz = pytz.timezone('America/Mexico_City')
 
 
 def main_window():
-    conn = st.experimental_connection("supabase",type=SupabaseConnection)
     st.markdown("""
                 # Alcancia
                 ### Dinero ahorrado con la más preciosa del mundo ☀️❤️
@@ -60,8 +51,8 @@ def main_window():
                 gastos = float(gastos)
                 fecha_actual = datetime.now(tz).strftime("%Y-%m-%d")
                 nuevo_registro = (fecha_actual, ingresos, gastos)
-                cursor.execute(query,nuevo_registro)
-                cnx.commit()
+                cursor.execute(query, nuevo_registro)
+                conexion.commit()
 
             elif ingresos.isnumeric():
                 ingresos = float(ingresos)
@@ -70,8 +61,8 @@ def main_window():
                 print(fecha_actual)
                 # Insertar datos en la base de datos
                 nuevo_registro = (fecha_actual, ingresos, gastos)
-                cursor.execute(query,nuevo_registro)
-                cnx.commit()
+                cursor.execute(query, nuevo_registro)
+                conexion.commit()
 
             elif gastos.isnumeric():
                 ingresos = float(0)
@@ -79,32 +70,28 @@ def main_window():
                 fecha_actual = datetime.now(tz).strftime("%Y-%m-%d")
                 # Insertar datos en la base de datos
                 nuevo_registro = (fecha_actual, ingresos, gastos)
-                cursor.execute(query,nuevo_registro)
-                cnx.commit()
+                cursor.execute(query, nuevo_registro)
+                conexion.commit()
                 
                  
             else:
                  pass
 
         if col3.button("Borrar último registro", type="primary"):
-            ultimo_id = session.query(func.max(Ahorro.ID_Ahorro)).scalar()
-            elemento_a_eliminar = session.query(Ahorro).filter_by(ID_Ahorro=ultimo_id).one()
-
-            session.delete(elemento_a_eliminar)
-            session.commit()
+            cursor.execute("DELETE FROM Ahorro WHERE ID_Ahorro = (SELECT MAX(ID_Ahorro) FROM Ahorro)")
+            conexion.commit()
 
 
     except Exception as e:
         st.error(f'Error: {e}')
 
     finally:
-        cursor.close()
-        cnx.close()
+        pass
          
 
     # Leer datos de la base de datos y crear un DataFrame
-    consulta_sql = conn.query("*", table="Ahorro", ttl="10m").execute()
-    df = pd.read_sql_query(consulta_sql, conn)
+    consulta_sql = "SELECT * FROM Ahorro"
+    df = pd.read_sql_query(consulta_sql, conexion)
     df['Fecha'] = pd.to_datetime(df['Fecha'], format='%Y-%m-%d')
     df['Fecha'] = df['Fecha'].dt.date
     df['Ingresos'] = pd.to_numeric(df['Ingreso'], errors='coerce')
@@ -133,4 +120,3 @@ st.sidebar.header("Para el futuro")
 st.sidebar.caption('Vivir momentos a tu lado es lo mejor que hay.')
 
 main_window()
-'''
