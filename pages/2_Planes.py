@@ -1,22 +1,16 @@
 import streamlit as st
 import pandas as pd
-import sqlite3
+import mysql.connector
 
-# Conecction with database
-conexion = sqlite3.connect('mi_base_de_datos.db')
+connection = mysql.connector.connect(
+  host= st.secrets.db_credentials.host,
+  user= st.secrets.db_credentials.username,
+  password = st.secrets.db_credentials.password,
+  database = st.secrets.db_credentials.database,
+  ssl_ca = "/workspaces/streamlitapp/cacert.pem")
 
-cursor = conexion.cursor()
-
-# Crear la tabla Ahorro con columnas de tipo REAL
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS Plan (
-        ID_Plan INTEGER PRIMARY KEY AUTOINCREMENT,
-        Nombre TEXT NOT NULL,
-        Budget REAL NOT NULL
-    )
-''')
-
-conexion.commit()
+# Crea un cursor para ejecutar consultas SQL
+cursor = connection.cursor()
 
 def main():
     st.header('Planes por hacer')
@@ -29,14 +23,23 @@ Salidas o citas que tenemos pendientes por hacer💕''')
         budget = col2.text_input('Budget', placeholder= 'Dinero necesario')
         if st.button('Agregar', type= 'primary', use_container_width=True):
             nuevo_registro = (cita, budget)
-            queryadd = 'INSERT INTO Plan (Nombre, Budget) VALUES (?, ?)'
+            queryadd = "INSERT INTO Plan (Nombre, Budget) VALUES (%s, %s)"
             cursor.execute(queryadd, nuevo_registro)
-            conexion.commit()
+            connection.commit()
 
         delete = st.text_input('Eliminar', placeholder='Ingrese el nombre del plan que quiera borrar')
         if st.button('DELETE', type= 'primary'):
-            cursor.execute('DELETE FROM Plan WHERE Nombre = ?', (delete,))
-            conexion.commit()
+            # Consulta para obtener el ID del último registro insertado
+            consulta_id = "SELECT MAX(ID_Plan) FROM Plan"
+            cursor.execute(consulta_id)
+            ultimo_id = cursor.fetchone()[0]
+
+            # Consulta para eliminar el último registro insertado
+            consulta_eliminar = "DELETE FROM Plan WHERE ID_Plan = %s"
+            cursor.execute(consulta_eliminar, (ultimo_id,))
+
+            # Hacer commit para confirmar los cambios en la base de datos
+            connection.commit()
             
     except:
         pass
@@ -44,7 +47,7 @@ Salidas o citas que tenemos pendientes por hacer💕''')
 
     try:
         consulta_sql = "SELECT * FROM Ahorro"
-        df = pd.read_sql_query(consulta_sql, conexion)
+        df = pd.read_sql_query(consulta_sql, connection)
         df['Fecha'] = pd.to_datetime(df['Fecha'], format='%Y-%m-%d')
         df['Fecha'] = df['Fecha'].dt.date
         df['Ingresos'] = pd.to_numeric(df['Ingreso'], errors='coerce')
@@ -59,7 +62,7 @@ Salidas o citas que tenemos pendientes por hacer💕''')
         balance_total = tabla['Balance total'].iloc[idmax]
 
         query = 'SELECT * FROM Plan'
-        df1 = pd.read_sql_query(query, conexion)
+        df1 = pd.read_sql_query(query, connection)
 
         df1['Dinero'] = df1.apply(lambda row: row['Budget'] <= balance_total, axis=1)
         df2 = df1[['Nombre', 'Budget', 'Dinero']]

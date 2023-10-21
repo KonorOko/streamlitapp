@@ -17,27 +17,7 @@ connection = mysql.connector.connect(
 # Crea un cursor para ejecutar consultas SQL
 cursor = connection.cursor()
 
-# Ejecuta una consulta SQL para seleccionar todos los registros de la tabla usuarios
-query = "SELECT * FROM Ahorro"
-
-df = pd.read_sql_query(query, connection)
-
-st.dataframe(df)
-# Recupera todos los registros de la tabla
-
-'''
-# Conectar a la base de datos (si no existe, se creará)
-conexion = sqlite3.connect('mi_base_de_datos.db')
-
-# Crear un cursor para ejecutar comandos SQL
-cursor = conexion.cursor()
-
-
-
-conexion.commit()
-# Guardar los cambios y cerrar la conexión
-
-query = "INSERT INTO Ahorro (Fecha, Ingreso, Gasto) VALUES (?, ?, ?)"
+query = "INSERT INTO Ahorro (Fecha, Ingreso, Gasto) VALUES (%s, %s, %s)"
 
 # Adjust the time zone
 tz = pytz.timezone('America/Mexico_City')
@@ -62,7 +42,7 @@ def main_window():
                 fecha_actual = datetime.now(tz).strftime("%Y-%m-%d")
                 nuevo_registro = (fecha_actual, ingresos, gastos)
                 cursor.execute(query, nuevo_registro)
-                conexion.commit()
+                connection.commit()
 
             elif ingresos.isnumeric():
                 ingresos = float(ingresos)
@@ -71,7 +51,7 @@ def main_window():
                 # Insertar datos en la base de datos
                 nuevo_registro = (fecha_actual, ingresos, gastos)
                 cursor.execute(query, nuevo_registro)
-                conexion.commit()
+                connection.commit()
 
             elif gastos.isnumeric():
                 ingresos = float(0)
@@ -80,15 +60,25 @@ def main_window():
                 # Insertar datos en la base de datos
                 nuevo_registro = (fecha_actual, ingresos, gastos)
                 cursor.execute(query, nuevo_registro)
-                conexion.commit()
+                connection.commit()
                 
                  
             else:
                  pass
 
         if col3.button("Borrar último registro", type="primary"):
-            cursor.execute("DELETE FROM Ahorro WHERE ID_Ahorro = (SELECT MAX(ID_Ahorro) FROM Ahorro)")
-            conexion.commit()
+            # Consulta para obtener el ID del último registro insertado
+            consulta_id = "SELECT MAX(ID_Ahorro) FROM Ahorro"
+            cursor.execute(consulta_id)
+            ultimo_id = cursor.fetchone()[0]
+
+            # Consulta para eliminar el último registro insertado
+            consulta_eliminar = "DELETE FROM Ahorro WHERE ID_Ahorro = %s"
+            cursor.execute(consulta_eliminar, (ultimo_id,))
+
+            # Hacer commit para confirmar los cambios en la base de datos
+            connection.commit()
+
 
 
     except Exception as e:
@@ -100,7 +90,7 @@ def main_window():
 
     # Leer datos de la base de datos y crear un DataFrame
     consulta_sql = "SELECT * FROM Ahorro"
-    df = pd.read_sql_query(consulta_sql, conexion)
+    df = pd.read_sql_query(consulta_sql, connection)
     df['Fecha'] = pd.to_datetime(df['Fecha'], format='%Y-%m-%d')
     df['Fecha'] = df['Fecha'].dt.date
     df['Ingresos'] = pd.to_numeric(df['Ingreso'], errors='coerce')
@@ -129,5 +119,3 @@ st.sidebar.header("Para el futuro")
 st.sidebar.caption('Vivir momentos a tu lado es lo mejor que hay.')
 
 main_window()
-
-'''
