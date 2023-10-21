@@ -58,7 +58,6 @@ def main_window():
                 ingresos = float(ingresos)
                 gastos = float(0)
                 fecha_actual = datetime.now(tz).strftime("%Y-%m-%d")
-                print(fecha_actual)
                 # Insertar datos en la base de datos
                 nuevo_registro = (fecha_actual, ingresos, gastos)
                 cursor.execute(query, nuevo_registro)

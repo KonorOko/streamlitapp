@@ -23,12 +23,19 @@ def main():
     st.markdown('''
 Salidas o citas que tenemos pendientes por hacer💕''')
     try:
-        cita = st.text_input('Agregar planes:', placeholder='Cita<3')
-        budget = st.text_input('Budget', placeholder= 'Dinero necesario')
-        if st.button('Agregar', type= 'primary'):
+        col1, col2 = st.columns(2)
+        cita = col1.text_input('Agregar planes:', placeholder='Cita<3')
+
+        budget = col2.text_input('Budget', placeholder= 'Dinero necesario')
+        if st.button('Agregar', type= 'primary', use_container_width=True):
             nuevo_registro = (cita, budget)
-            queryadd = 'INSERT INTO Plan (Nombre, Budget) VALUES (?, ?, ?)'
+            queryadd = 'INSERT INTO Plan (Nombre, Budget) VALUES (?, ?)'
             cursor.execute(queryadd, nuevo_registro)
+            conexion.commit()
+
+        delete = st.text_input('Eliminar', placeholder='Ingrese el nombre del plan que quiera borrar')
+        if st.button('DELETE', type= 'primary'):
+            cursor.execute('DELETE FROM Plan WHERE Nombre = ?', (delete,))
             conexion.commit()
             
     except:
@@ -43,6 +50,7 @@ Salidas o citas que tenemos pendientes por hacer💕''')
         df['Ingresos'] = pd.to_numeric(df['Ingreso'], errors='coerce')
         df['Gastos'] = pd.to_numeric(df['Gasto'], errors='coerce')
 
+
         tabla = df.groupby('Fecha').agg({'Ingreso': 'sum', 'Gasto': 'sum'}).reset_index()
 
         tabla['Balance diario'] = tabla['Ingreso'] - tabla['Gasto']
@@ -54,20 +62,30 @@ Salidas o citas que tenemos pendientes por hacer💕''')
         df1 = pd.read_sql_query(query, conexion)
 
         df1['Dinero'] = df1.apply(lambda row: row['Budget'] <= balance_total, axis=1)
+        df2 = df1[['Nombre', 'Budget', 'Dinero']]
+
 
 
         st.data_editor(
-            df1,
+            df2,
             column_config={
                 "Dinero": st.column_config.CheckboxColumn(
                     "Dinero?",
                     help="Se marcan cuando tenemos el dinero suficiente",
                     default=False,
+                    disabled=True
             )
         },
         disabled=["widgets"],
-        hide_index=True,
+        hide_index=True
         )
+
+        
+
+
+
+
+
     except:
         pass
 
