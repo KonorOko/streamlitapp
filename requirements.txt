@@ -1,8 +1,0 @@
-altair
-numpy
-pandas
-python-dotenv
-streamlit
-pydeck
-streamlit_player
-mysql-connector-python
