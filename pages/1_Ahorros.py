@@ -5,19 +5,14 @@ import altair as alt
 import pytz
 import streamlit as st
 
-import MySQLdb
+import mysql.connector
 
-connection = MySQLdb.connect(
+connection = mysql.connector.connect(
   host= st.secrets.db_credentials.host,
   user= st.secrets.db_credentials.username,
-  passwd= st.secrets.db_credentials.password,
-  db= st.secrets.db_credentials.database,
-  autocommit = True,
-  ssl_mode = "VERIFY_IDENTITY",
-  ssl      = {
-    "ca": "/workspaces/streamlitapp/cacert.pem"
-  }
-)
+  password = st.secrets.db_credentials.password,
+  database = st.secrets.db_credentials.database,
+  ssl_ca = "/workspaces/streamlitapp/cacert.pem")
 
 # Crea un cursor para ejecutar consultas SQL
 cursor = connection.cursor()

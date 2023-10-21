@@ -5,5 +5,4 @@ python-dotenv
 streamlit
 pydeck
 streamlit_player
-mysqlclient
-SQLAlchemy
+mysql-connector-python
