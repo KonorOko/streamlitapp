@@ -3,26 +3,41 @@ from datetime import datetime
 import pandas as pd
 import altair as alt
 import pytz
-from sqlalchemy import func
 import streamlit as st
 
-import sqlite3
+import MySQLdb
 
+connection = MySQLdb.connect(
+  host= st.secrets.db_credentials.host,
+  user= st.secrets.db_credentials.username,
+  passwd= st.secrets.db_credentials.password,
+  db= st.secrets.db_credentials.database,
+  autocommit = True,
+  ssl_mode = "VERIFY_IDENTITY",
+  ssl      = {
+    "ca": "/workspaces/streamlitapp/cacert.pem"
+  }
+)
+
+# Crea un cursor para ejecutar consultas SQL
+cursor = connection.cursor()
+
+# Ejecuta una consulta SQL para seleccionar todos los registros de la tabla usuarios
+query = "SELECT * FROM Ahorro"
+
+df = pd.read_sql_query(query, connection)
+
+st.dataframe(df)
+# Recupera todos los registros de la tabla
+
+'''
 # Conectar a la base de datos (si no existe, se creará)
 conexion = sqlite3.connect('mi_base_de_datos.db')
 
 # Crear un cursor para ejecutar comandos SQL
 cursor = conexion.cursor()
 
-# Crear la tabla Ahorro solo si no existe
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS Ahorro (
-        ID_Ahorro INTEGER PRIMARY KEY AUTOINCREMENT,
-        Fecha TEXT NOT NULL,
-        Ingreso REAL NOT NULL,
-        Gasto REAL NOT NULL
-    )
-''')
+
 
 conexion.commit()
 # Guardar los cambios y cerrar la conexión
@@ -119,3 +134,5 @@ st.sidebar.header("Para el futuro")
 st.sidebar.caption('Vivir momentos a tu lado es lo mejor que hay.')
 
 main_window()
+
+'''

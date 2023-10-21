@@ -2,7 +2,7 @@ altair
 numpy
 pandas
 python-dotenv
-SQLAlchemy
 streamlit
 pydeck
 streamlit_player
+mysqlclient
