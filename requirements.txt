@@ -6,4 +6,3 @@ SQLAlchemy
 streamlit
 pydeck
 streamlit_player
-sqlite3
