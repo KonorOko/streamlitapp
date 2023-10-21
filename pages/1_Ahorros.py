@@ -5,11 +5,16 @@ import altair as alt
 import pytz
 from sqlalchemy import func
 import streamlit as st
+import ssl
 
 from dotenv import load_dotenv
 load_dotenv()
 import os
 import MySQLdb
+
+ssl_context = ssl.create_default_context()
+ssl_context.check_hostname = False
+ssl_context.verify_mode = ssl.CERT_NONE
 
 connection = MySQLdb.connect(
   host= os.getenv("DB_HOST"),
@@ -17,10 +22,7 @@ connection = MySQLdb.connect(
   passwd= os.getenv("DB_PASSWORD"),
   db= os.getenv("DB_NAME"),
   autocommit = True,
-  ssl_mode = "VERIFY_IDENTITY",
-  ssl      = {
-    "ca": "etc/ssl/cert.pem"
-  }
+  ssl=ssl_context
 )
 
 consulta = "SELECT * FROM Ahorro"
